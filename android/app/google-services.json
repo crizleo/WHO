@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "224448207100",
+    "firebase_url": "https://who1-6e4e4-default-rtdb.firebaseio.com",
+    "project_id": "who1-6e4e4",
+    "storage_bucket": "who1-6e4e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224448207100:android:3203f19b3d6f6479f39f79",
+        "android_client_info": {
+          "package_name": "com.example.who"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA79n6dAzpwTbUN06pgMqqm853HAwioI30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
