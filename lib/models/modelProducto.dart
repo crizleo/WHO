@@ -1,27 +1,3 @@
-/*class usuario{
-  String nombre;
-  String apellido;
-  String correo;
-  String telefono;
-  String direccion;
-
-  usuario({
-    required this.nombre,
-    required this.apellido,
-    required this.correo,
-    required this.telefono,
-    required this.direccion,
-  });
-
-  factory usuario.fromMap(Map<String, dynamic> json) => usuario(
-      nombre: json["nombre"],
-      apellido: json["apellido"],
-      correo: json["correo"],
-      telefono: json["telefono"],
-      direccion: json["direccion"],
-    );
-}*/
-
 class Producto {
   int? codigo;
   String nombre;
@@ -45,7 +21,7 @@ class Producto {
     return Producto(
       codigo: json['codigo'],
       nombre: json['nombre'],
-      precio: json['precio'],
+      precio: (json['precio'] as num).toDouble(),
       descripcion: json['descripcion'],
       imagen: json['imagen'],
     );
