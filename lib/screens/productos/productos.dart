@@ -54,7 +54,6 @@ class ProductosState extends State<Productos> {
         });
       }
     } catch (e) {
-      print('Error al cargar productos: $e');
       setState(() {
         isLoading = false;
       });
@@ -108,7 +107,7 @@ class ProductosState extends State<Productos> {
               color: Colors.orange.shade50,
               child: GridView.builder(
                 padding: const EdgeInsets.all(16.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.75,
                   crossAxisSpacing: 10.0,
