@@ -4,18 +4,18 @@ class Pedido {
   String codigo;
   double iva;
   double total;
-  String direccion;
+  String cliente;
 
-  Pedido({this.codigoPedido, required this.idEstado, required this.codigo, required this.iva, required this.total, required this.direccion});
+  Pedido({this.codigoPedido, required this.idEstado, required this.codigo, required this.iva, required this.total, required this.cliente});
 
   Map<String, dynamic> toJson() {
     return {
       'codigoPedido': codigoPedido,
-      'idEstado': idEstado,
+      'Estado': idEstado,
       'codigo': codigo,
       'iva': iva,
       'total': total,
-      'direccion': direccion,
+      'cliente': cliente,
     };
   }
 
@@ -26,7 +26,7 @@ class Pedido {
       codigo: json['codigo'],
       iva: (json['iva'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
-      direccion: json['direccion'],
+      cliente: json['cliente'],
     );
   }
 }

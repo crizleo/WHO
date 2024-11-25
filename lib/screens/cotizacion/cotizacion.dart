@@ -32,26 +32,68 @@ class CotizacionListState extends State<CotizacionList> {
       DatabaseEvent event =
           await FirebaseDatabase.instance.ref().child('cotizaciones').once();
 
-      DataSnapshot snapshot = event.snapshot;
+      if (event.snapshot.value != null) {
+        print('Datos crudos: ${event.snapshot.value}'); // Debug
 
-      if (snapshot.value != null) {
-        Map<String, dynamic> cotizacionesMap =
-            Map<String, dynamic>.from(snapshot.value as Map);
+        Map<dynamic, dynamic> data =
+            event.snapshot.value as Map<dynamic, dynamic>;
+        List<Cotizacion> listaCotizaciones = [];
+
+        data.forEach((key, value) {
+          try {
+            // Convertir todos los valores a String, dynamic
+            Map<String, dynamic> cotizacionMap = {};
+            (value as Map<dynamic, dynamic>).forEach((k, v) {
+              if (k.toString() == 'items' && v != null) {
+                // Convertir items a List<Map<String, dynamic>>
+                List<Map<String, dynamic>> itemsList = [];
+
+                if (v is Map) {
+                  v.forEach((itemKey, itemValue) {
+                    if (itemValue is Map) {
+                      Map<String, dynamic> itemMap =
+                          _convertToStringDynamicMap(itemValue);
+                      itemMap['id'] = itemKey
+                          .toString(); // Asegurar que el id está presente
+                      itemsList.add(itemMap);
+                    }
+                  });
+                } else if (v is List) {
+                  for (var item in v) {
+                    if (item is Map) {
+                      Map<String, dynamic> itemMap =
+                          _convertToStringDynamicMap(item);
+                      itemsList.add(itemMap);
+                    }
+                  }
+                }
+
+                cotizacionMap['items'] = itemsList;
+              } else {
+                cotizacionMap[k.toString()] = v;
+              }
+            });
+
+            // Agregar el ID de la cotización
+            cotizacionMap['idCotizacion'] = key;
+
+            Cotizacion cotizacion = Cotizacion.fromJson(cotizacionMap);
+            listaCotizaciones.add(cotizacion);
+          } catch (e, stackTrace) {
+          }
+        });
+
         setState(() {
-          cotizaciones = cotizacionesMap.entries.map((entry) {
-            Map<String, dynamic> cotizacionData =
-                Map<String, dynamic>.from(entry.value as Map);
-            return Cotizacion.fromJson(cotizacionData);
-          }).toList();
-          // Ordenar por código de manera descendente (más reciente primero)
+          cotizaciones = listaCotizaciones;
           cotizaciones.sort((a, b) => b.codigo.compareTo(a.codigo));
         });
+
       } else {
         setState(() {
           cotizaciones = [];
         });
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       setState(() {
         error = 'Error al cargar las cotizaciones: $e';
       });
@@ -60,6 +102,26 @@ class CotizacionListState extends State<CotizacionList> {
         isLoading = false;
       });
     }
+  }
+
+// Función auxiliar para convertir Map<dynamic, dynamic> a Map<String, dynamic>
+  Map<String, dynamic> _convertToStringDynamicMap(Map<dynamic, dynamic> map) {
+    Map<String, dynamic> result = {};
+    map.forEach((key, value) {
+      if (value is Map) {
+        result[key.toString()] = _convertToStringDynamicMap(value);
+      } else if (value is List) {
+        result[key.toString()] = value.map((item) {
+          if (item is Map) {
+            return _convertToStringDynamicMap(item);
+          }
+          return item;
+        }).toList();
+      } else {
+        result[key.toString()] = value;
+      }
+    });
+    return result;
   }
 
   Future<void> _confirmarEliminacion(
@@ -114,7 +176,7 @@ class CotizacionListState extends State<CotizacionList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Lista de Cotizaciones',
+          'Cotizaciones',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.orange,

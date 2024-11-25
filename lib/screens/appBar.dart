@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:who/screens/cotizacion/cotizacion.dart';
-import 'package:who/screens/loginPage.dart';
 import 'package:who/screens/productos/productos.dart';
 
 class AppBarMenu extends StatefulWidget {
@@ -27,9 +26,6 @@ class _AppBarMenu extends State<AppBarMenu> {
     Container(
       child: CotizacionList(),
     ),
-    Container(
-      child: LoginPage(),
-    ),
   ];
 
   @override
@@ -45,7 +41,6 @@ class _AppBarMenu extends State<AppBarMenu> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
           BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
         ],
       )
     );

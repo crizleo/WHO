@@ -7,9 +7,9 @@ class Cotizacion {
   String nombreCliente;
   DateTime fecha;
   double iva;
-  double subtotal;  // Nuevo campo
+  double subtotal;
   double total;
-  List<CotizacionItem> items; // Nuevo campo
+  List<CotizacionItem> items;
 
   Cotizacion({
     this.idCotizacion,
@@ -28,9 +28,9 @@ class Cotizacion {
     total = subtotal + (subtotal * (iva / 100));
   }
 
-  // Actualizar toJson y fromJson para incluir los nuevos campos
   Map<String, dynamic> toJson() {
-    return {
+    
+    var json = {
       'idCotizacion': idCotizacion,
       'idEstadoCoti': idEstadoCoti,
       'codigo': codigo,
@@ -39,25 +39,63 @@ class Cotizacion {
       'iva': iva,
       'subtotal': subtotal,
       'total': total,
-      'items': items.map((item) => item.toJson()).toList(),
+      'items': items.asMap().map((key, item) {
+        print('📝 Convirtiendo item $key a JSON');
+        return MapEntry(key.toString(), item.toJson());
+      }),
     };
+    
+    return json;
   }
 
   static Cotizacion fromJson(Map<String, dynamic> json) {
-    return Cotizacion(
-      idCotizacion: json['idCotizacion'],
-      idEstadoCoti: json['idEstadoCoti'],
-      codigo: json['codigo'],
-      nombreCliente: json['nombreCliente'] ?? '',
-      fecha: json['fecha'] != null
-          ? DateTime.parse(json['fecha'])
-          : DateTime.now(),
-      iva: (json['iva'] as num?)?.toDouble() ?? 0.0,
-      subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
-      total: (json['total'] as num?)?.toDouble() ?? 0.0,
-      items: (json['items'] as List<dynamic>?)
-          ?.map((item) => CotizacionItem.fromJson(item))
-          .toList() ?? [],
-    );
+
+    try {
+      List<CotizacionItem> parseItems(dynamic itemsData) {
+        
+        List<CotizacionItem> items = [];
+        
+        if (itemsData != null && itemsData is Map) {
+          itemsData.forEach((key, value) {
+            
+            if (value is Map) {
+              try {
+                Map<String, dynamic> itemMap = Map<String, dynamic>.from(value);
+                var item = CotizacionItem.fromJson(itemMap);
+                items.add(item);
+              } catch (e) {
+                
+              }
+            }
+          });
+        }
+        
+        print('📋 Total de items parseados: ${items.length}');
+        return items;
+      }
+
+      var fecha = DateTime.parse(json['fecha'] ?? DateTime.now().toIso8601String());
+      var iva = (json['iva'] as num?)?.toDouble() ?? 19.0;
+      var subtotal = (json['subtotal'] as num?)?.toDouble() ?? 0.0;
+      var total = (json['total'] as num?)?.toDouble() ?? 0.0;
+      
+      var items = parseItems(json['items']);
+      print('📋 Items parseados: ${items.length}');
+
+      return Cotizacion(
+        idCotizacion: json['idCotizacion'],
+        idEstadoCoti: json['idEstadoCoti'] ?? 1,
+        codigo: json['codigo'] ?? '',
+        nombreCliente: json['nombreCliente'] ?? '',
+        fecha: fecha,
+        iva: iva,
+        subtotal: subtotal,
+        total: total,
+        items: items,
+      );
+    } catch (e, stackTrace) {
+      
+      rethrow;
+    }
   }
 }

@@ -12,6 +12,29 @@ class FirebaseService {
     await databaseRef.child('productos/${producto.codigo}').set(producto.toJson());
   }
 
+  Future<List<Producto>> getProductos() async {
+    try {
+      DatabaseEvent event = await databaseRef.child('productos').once();
+      DataSnapshot snapshot = event.snapshot;
+      
+      if (snapshot.value == null) {
+        return [];
+      }
+
+      // Convertir el snapshot a Map
+      Map<dynamic, dynamic> productosMap = snapshot.value as Map<dynamic, dynamic>;
+      
+      // Convertir cada entrada del Map a un objeto Producto
+      List<Producto> productos = productosMap.entries.map((entry) {
+        return Producto.fromJson(Map<String, dynamic>.from(entry.value as Map));
+      }).toList();
+
+      return productos;
+    } catch (e) {
+      print('Error al obtener productos: $e');
+      throw Exception('Error al obtener la lista de productos: $e');
+    }
+  }
 
   Future<Producto> readProducto(int codigo) async {
     DatabaseEvent event = await databaseRef.child('productos/$codigo').once();
@@ -76,11 +99,26 @@ class FirebaseService {
   }
 }
   
-  Future<Cotizacion> readCotizacion(String idCotizacion) async { 
-    DatabaseEvent event = await databaseRef.child('cotizaciones/$idCotizacion').once(); 
-    DataSnapshot snapshot = event.snapshot; 
-    return Cotizacion.fromJson(Map<String, dynamic>.from(snapshot.value as Map)); 
-  } 
+  Future<Cotizacion> readCotizacion(String idCotizacion) async {
+    try {
+      
+      DatabaseEvent event = await databaseRef.child('cotizaciones/$idCotizacion').once();
+      DataSnapshot snapshot = event.snapshot;
+      
+      if (snapshot.value == null) {
+        throw Exception('No se encontró la cotización');
+      }
+
+      Map<String, dynamic> data = Map<String, dynamic>.from(snapshot.value as Map);
+      data['idCotizacion'] = idCotizacion;
+      
+      Cotizacion cotizacion = Cotizacion.fromJson(data);
+      
+      return cotizacion;
+    } catch (e, stackTrace) {
+      rethrow;
+    }
+  }
   
   Future<void> deleteCotizacion(String idCotizacion) async { 
     await databaseRef.child('cotizaciones/$idCotizacion').remove(); 

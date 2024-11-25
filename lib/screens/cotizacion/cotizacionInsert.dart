@@ -12,8 +12,6 @@ class CotizacionCreateState extends State<CotizacionCreate> {
   TextEditingController codigoController = TextEditingController();
   TextEditingController nombreClienteController = TextEditingController();
   TextEditingController fechaController = TextEditingController();
-  TextEditingController ivaController = TextEditingController();
-  TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -102,20 +100,6 @@ class CotizacionCreateState extends State<CotizacionCreate> {
               ),
               onTap: () => _selectDate(context),
             ),
-            const SizedBox(height: 16),
-            _buildInputField(
-              controller: ivaController,
-              label: 'IVA',
-              icon: Icons.attach_money,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            _buildInputField(
-              controller: totalController,
-              label: 'Total',
-              icon: Icons.payment,
-              keyboardType: TextInputType.number,
-            ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: Icon(Icons.save),
@@ -163,9 +147,8 @@ class CotizacionCreateState extends State<CotizacionCreate> {
     // Verificar que todos los campos requeridos estén llenos
     if (codigoController.text.isEmpty ||
         nombreClienteController.text.isEmpty ||
-        fechaController.text.isEmpty ||
-        ivaController.text.isEmpty ||
-        totalController.text.isEmpty) {
+        fechaController.text.isEmpty
+        ) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, completa todos los campos'),
@@ -197,8 +180,8 @@ class CotizacionCreateState extends State<CotizacionCreate> {
       codigo: codigoController.text,
       nombreCliente: nombreClienteController.text,
       fecha: fechaDateTime,  // Usar el DateTime convertido
-      iva: double.tryParse(ivaController.text) ?? 0.0,
-      total: double.tryParse(totalController.text) ?? 0.0
+      iva: 19.0,
+      total: 0.0
     );
 
     // Imprimir los valores para debug
