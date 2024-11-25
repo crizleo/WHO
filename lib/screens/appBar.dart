@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:who/screens/cotizacion/cotizacion.dart';
-import 'package:who/screens/homeScreen.dart';
 import 'package:who/screens/loginPage.dart';
+import 'package:who/screens/productos/productos.dart';
 
 class AppBarMenu extends StatefulWidget {
   const AppBarMenu({super.key});
@@ -22,7 +22,7 @@ class _AppBarMenu extends State<AppBarMenu> {
 
   List<Widget> screens = [
     Container(
-      child: HomeScreen(),
+      child: const Productos(),
     ),
     Container(
       child: CotizacionList(),

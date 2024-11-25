@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Firebase Authentication Example', // Título de la app
       theme: ThemeData(
-        primarySwatch: Colors.blue, // Tema principal de la app
+        primarySwatch: Colors.orange, // Tema principal de la app
       ),
       home: LoginPage(), // Página inicial de la aplicación
     );
