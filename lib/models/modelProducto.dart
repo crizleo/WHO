@@ -1,7 +1,7 @@
 class Producto {
   int? codigo;
   String nombre;
-  int precio;
+  double precio;
   String descripcion;
   String imagen;
 

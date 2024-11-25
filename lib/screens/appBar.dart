@@ -1,32 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:who/screens/cotizacion/cotizacion.dart';
+import 'package:who/screens/homeScreen.dart';
+import 'package:who/screens/loginPage.dart';
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class AppBarMenu extends StatefulWidget {
+  const AppBarMenu({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<AppBarMenu> createState() => _AppBarMenu();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _AppBarMenu extends State<AppBarMenu> {
 
-  int CurrentIndex = 1;
+  int currentIndex = 0;
 
   void _onItemTapped(int index){
     setState((){
-      CurrentIndex = index;
+      currentIndex = index;
     });
   }
 
+  List<Widget> screens = [
+    Container(
+      child: HomeScreen(),
+    ),
+    Container(
+      child: CotizacionList(),
+    ),
+    Container(
+      child: LoginPage(),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: CurrentIndex,
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
-        BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-        BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
-      ],
+    return Scaffold(
+
+      body: screens.elementAt(currentIndex),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        selectedItemColor: Colors.orange,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
+          BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
+          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
+        ],
+      )
     );
   }
 }
