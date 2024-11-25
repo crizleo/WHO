@@ -12,6 +12,7 @@ class FirebaseService {
     await databaseRef.child('productos/${producto.codigo}').set(producto.toJson());
   }
 
+
   Future<Producto> readProducto(int codigo) async {
     DatabaseEvent event = await databaseRef.child('productos/$codigo').once();
     DataSnapshot snapshot = event.snapshot;
@@ -53,17 +54,35 @@ class FirebaseService {
   } 
   
   // Cotizaciones 
-  Future<void> createOrUpdateCotizacion(Cotizacion cotizacion) async { 
-    await databaseRef.child('cotizaciones/${cotizacion.idCotizacion}').set(cotizacion.toJson()); 
-  } 
+  Future<String> createOrUpdateCotizacion(Cotizacion cotizacion) async {
+
+  if (cotizacion.idCotizacion == null) {
+ 
+    final newCotizacionRef = databaseRef.child('cotizaciones').push();
+    
+ 
+    String newId = newCotizacionRef.key!;
+    
+    cotizacion.idCotizacion = newId;
+    
+    await newCotizacionRef.set(cotizacion.toJson());
+    return newId;
+  } else {
+
+    await databaseRef
+        .child('cotizaciones/${cotizacion.idCotizacion}')
+        .set(cotizacion.toJson());
+    return cotizacion.idCotizacion.toString();
+  }
+}
   
-  Future<Cotizacion> readCotizacion(int idCotizacion) async { 
+  Future<Cotizacion> readCotizacion(String idCotizacion) async { 
     DatabaseEvent event = await databaseRef.child('cotizaciones/$idCotizacion').once(); 
     DataSnapshot snapshot = event.snapshot; 
     return Cotizacion.fromJson(Map<String, dynamic>.from(snapshot.value as Map)); 
   } 
   
-  Future<void> deleteCotizacion(int idCotizacion) async { 
+  Future<void> deleteCotizacion(String idCotizacion) async { 
     await databaseRef.child('cotizaciones/$idCotizacion').remove(); 
   }
 }

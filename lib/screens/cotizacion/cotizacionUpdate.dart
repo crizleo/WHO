@@ -4,7 +4,7 @@ import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
 
 class CotizacionUpdate extends StatefulWidget {
-  final int cotizacionId;
+  final String cotizacionId;
 
   CotizacionUpdate({required this.cotizacionId});
 
@@ -20,6 +20,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
   Cotizacion? cotizacion;
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   @override
   void initState() {
@@ -32,7 +33,10 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
     setState(() {
       codigoController.text = cotizacion?.codigo ?? '';
       nombreClienteController.text = cotizacion?.nombreCliente ?? '';
-      fechaController.text = cotizacion?.fecha ?? '';
+      // Formatear la fecha DateTime a String
+      fechaController.text = cotizacion?.fecha != null 
+          ? dateFormat.format(cotizacion!.fecha)
+          : '';
       ivaController.text = cotizacion?.iva.toString() ?? '';
       totalController.text = cotizacion?.total.toString() ?? '';
     });
@@ -84,14 +88,14 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Actualizar Cotización',
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.indigo[900],
+        backgroundColor: Colors.orange,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -100,20 +104,20 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
               label: 'Código',
               icon: Icons.qr_code,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildInputField(
               controller: nombreClienteController,
               label: 'Nombre del Cliente',
               icon: Icons.person,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
               controller: fechaController,
               readOnly: true,
               decoration: InputDecoration(
                 labelText: 'Fecha',
                 hintText: 'DD/MM/YYYY',
-                prefixIcon: Icon(Icons.calendar_today),
+                prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -121,33 +125,34 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
                 fillColor: Colors.white,
                 contentPadding: EdgeInsets.all(16),
               ),
+              onTap: () => _selectDate(context),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildInputField(
               controller: ivaController,
               label: 'IVA',
               icon: Icons.attach_money,
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildInputField(
               controller: totalController,
               label: 'Total',
               icon: Icons.payment,
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    icon: Icon(Icons.save),
-                    label: Text("Actualizar"),
+                    icon: const Icon(Icons.save),
+                    label: const Text("Actualizar"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo[900],
+                      backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -155,15 +160,15 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
                     onPressed: actualizarCotizacion,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton.icon(
-                    icon: Icon(Icons.delete),
-                    label: Text("Eliminar"),
+                    icon: const Icon(Icons.delete),
+                    label: const Text("Eliminar"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[900],
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -196,7 +201,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
       ),
     );
   }
@@ -210,7 +215,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
           fechaDateTime = dateFormat.parse(fechaController.text);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Formato de fecha inválido'),
               backgroundColor: Colors.red,
             ),
@@ -223,10 +228,9 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
           idEstadoCoti: cotizacion!.idEstadoCoti,
           codigo: codigoController.text,
           nombreCliente: nombreClienteController.text,
-          fecha: fechaController.text,
+          fecha: fechaDateTime, // Usar el DateTime convertido
           iva: double.parse(ivaController.text),
-          total: double.parse(totalController.text),
-          imagen: cotizacion!.imagen,
+          total: double.parse(totalController.text)
         );
 
         await firebaseService.createOrUpdateCotizacion(cotizacion!);
@@ -249,15 +253,15 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirmar eliminación'),
-            content: Text('¿Está seguro que desea eliminar esta cotización?'),
+            title: const Text('Confirmar eliminación'),
+            content: const Text('¿Está seguro que desea eliminar esta cotización?'),
             actions: [
               TextButton(
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               TextButton(
-                child: Text('Eliminar'),
+                child: const Text('Eliminar'),
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
               ),
@@ -271,7 +275,6 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
         Navigator.pop(context);
       }
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error al eliminar la cotización: ${e.toString()}'),

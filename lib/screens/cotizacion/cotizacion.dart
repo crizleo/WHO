@@ -29,18 +29,18 @@ class CotizacionListState extends State<CotizacionList> {
         error = null;
       });
 
-      DatabaseEvent event = await FirebaseDatabase.instance
-          .ref()
-          .child('cotizaciones')
-          .once();
-      
+      DatabaseEvent event =
+          await FirebaseDatabase.instance.ref().child('cotizaciones').once();
+
       DataSnapshot snapshot = event.snapshot;
-      
+
       if (snapshot.value != null) {
-        Map<String, dynamic> cotizacionesMap = Map<String, dynamic>.from(snapshot.value as Map);
+        Map<String, dynamic> cotizacionesMap =
+            Map<String, dynamic>.from(snapshot.value as Map);
         setState(() {
           cotizaciones = cotizacionesMap.entries.map((entry) {
-            Map<String, dynamic> cotizacionData = Map<String, dynamic>.from(entry.value as Map);
+            Map<String, dynamic> cotizacionData =
+                Map<String, dynamic>.from(entry.value as Map);
             return Cotizacion.fromJson(cotizacionData);
           }).toList();
           // Ordenar por código de manera descendente (más reciente primero)
@@ -62,13 +62,15 @@ class CotizacionListState extends State<CotizacionList> {
     }
   }
 
-  Future<void> _confirmarEliminacion(BuildContext context, Cotizacion cotizacion) {
+  Future<void> _confirmarEliminacion(
+      BuildContext context, Cotizacion cotizacion) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar eliminación'),
-          content: Text('¿Está seguro que desea eliminar la cotización ${cotizacion.codigo}?'),
+          content: Text(
+              '¿Está seguro que desea eliminar la cotización ${cotizacion.codigo}?'),
           actions: [
             TextButton(
               child: const Text('Cancelar'),
@@ -82,7 +84,8 @@ class CotizacionListState extends State<CotizacionList> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
-                  await firebaseService.deleteCotizacion(cotizacion.idCotizacion!);
+                  await firebaseService
+                      .deleteCotizacion(cotizacion.idCotizacion!);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Cotización eliminada con éxito'),
@@ -110,7 +113,10 @@ class CotizacionListState extends State<CotizacionList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Cotizaciones', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Lista de Cotizaciones',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.orange,
         actions: [
           IconButton(
@@ -130,104 +136,110 @@ class CotizacionListState extends State<CotizacionList> {
       ),
       body: RefreshIndicator(
         onRefresh: cargarCotizaciones,
-        child: isLoading 
-          ? const Center(child: CircularProgressIndicator())
-          : error != null
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                    const SizedBox(height: 16),
-                    Text(error!, textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: cargarCotizaciones,
-                      child: const Text('Reintentar'),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : error != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline,
+                            size: 48, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text(error!, textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: cargarCotizaciones,
+                          child: const Text('Reintentar'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            : cotizaciones.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.description_outlined,
-                        size: 64,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No hay cotizaciones disponibles',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: cotizaciones.length,
-                  itemBuilder: (context, index) {
-                    final cotizacion = cotizaciones[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.orange,
-                          child: Text(
-                            cotizacion.codigo.substring(0, 2),
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        title: Text(
-                          'Cotización ${cotizacion.codigo}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  )
+                : cotizaciones.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const SizedBox(height: 4),
+                            const Icon(
+                              Icons.description_outlined,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(height: 16),
                             Text(
-                              'Total: \$${cotizacion.total.toStringAsFixed(2)}',
+                              'No hay cotizaciones disponibles',
                               style: TextStyle(
-                                color: Colors.green[700],
-                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                color: Colors.grey[600],
                               ),
                             ),
                           ],
                         ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.indigo),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CotizacionUpdate(
-                                      cotizacionId: cotizacion.idCotizacion!
+                      )
+                    : ListView.builder(
+                        itemCount: cotizaciones.length,
+                        itemBuilder: (context, index) {
+                          final cotizacion = cotizaciones[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.orange,
+                                child: Text(
+                                  cotizacion.codigo,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              title: Text(
+                                'Cotización ${cotizacion.codigo}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Total: \$${cotizacion.total.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      color: Colors.green[700],
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ).then((value) => cargarCotizaciones());
-                              },
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        color: Colors.indigo),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CotizacionUpdate(
+                                                  cotizacionId:
+                                                      cotizacion.idCotizacion!),
+                                        ),
+                                      ).then((value) => cargarCotizaciones());
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                    onPressed: () => _confirmarEliminacion(
+                                        context, cotizacion),
+                                  ),
+                                ],
+                              ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmarEliminacion(context, cotizacion),
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
       ),
     );
   }

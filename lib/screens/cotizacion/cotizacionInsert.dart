@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
-import './cotizacion.dart';
 
 class CotizacionCreate extends StatefulWidget {
   @override
@@ -11,120 +10,219 @@ class CotizacionCreate extends StatefulWidget {
 
 class CotizacionCreateState extends State<CotizacionCreate> {
   TextEditingController codigoController = TextEditingController();
-  TextEditingController ivaController = TextEditingController();
-  TextEditingController fechaController = TextEditingController();
   TextEditingController nombreClienteController = TextEditingController();
+  TextEditingController fechaController = TextEditingController();
+  TextEditingController ivaController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
-  DateTime selectedDate = DateTime.now();
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate;
+    try {
+      initialDate = fechaController.text.isNotEmpty 
+          ? dateFormat.parse(fechaController.text)
+          : DateTime.now();
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      locale: const Locale('es', ''),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.orange!,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.orange,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        fechaController.text = dateFormat.format(picked);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Agregar Cotización',
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.indigo[900],
+        backgroundColor: Colors.orange,
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
-            TextFormField(
+            _buildInputField(
               controller: codigoController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Código',
-              ),
+              label: 'Código',
+              icon: Icons.qr_code,
             ),
-            SizedBox(height: 20),
-            TextFormField(
+            const SizedBox(height: 16),
+            _buildInputField(
               controller: nombreClienteController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Nombre del Cliente',
-              ),
+              label: 'Nombre del Cliente',
+              icon: Icons.person,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 16),
             TextFormField(
               controller: fechaController,
+              readOnly: true,
               decoration: InputDecoration(
+                labelText: 'Fecha',
+                hintText: 'DD/MM/YYYY',
+                prefixIcon: Icon(Icons.calendar_today),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 filled: true,
                 fillColor: Colors.white,
-                hintText: 'Fecha',
+                contentPadding: EdgeInsets.all(16),
               ),
+              onTap: () => _selectDate(context),
             ),
-            SizedBox(height: 20),
-            TextFormField(
+            const SizedBox(height: 16),
+            _buildInputField(
               controller: ivaController,
+              label: 'IVA',
+              icon: Icons.attach_money,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'IVA',
-              ),
             ),
-            SizedBox(height: 20),
-            TextFormField(
+            const SizedBox(height: 16),
+            _buildInputField(
               controller: totalController,
+              label: 'Total',
+              icon: Icons.payment,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Total',
-              ),
             ),
-            SizedBox(height: 20),
-            MaterialButton(
-              height: 40,
-              onPressed: agregarCotizacion,
-              child: Text(
-                "Agregar Cotización",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: Icon(Icons.save),
+              label: const Text("Agregar Cotización"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              color: Colors.indigo[900],
+              onPressed: agregarCotizacion,
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
-          BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
-        ]
+      )
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: EdgeInsets.all(16),
       ),
     );
   }
 
   void agregarCotizacion() async {
-    try {
-      Cotizacion cotizacion = Cotizacion(
-        idCotizacion: null, // ID auto-generado
-        idEstadoCoti: 1, // Puede ser un valor real según tu lógica
-        codigo: codigoController.text,
-        nombreCliente: nombreClienteController.text,
-        fecha: fechaController.text,
-        iva: double.parse(ivaController.text),
-        total: double.parse(totalController.text),
-        imagen: '', 
-        nombreCliente: nombreClienteController.text, 
-        fecha: fechaController.text,
+  try {
+    // Verificar que todos los campos requeridos estén llenos
+    if (codigoController.text.isEmpty ||
+        nombreClienteController.text.isEmpty ||
+        fechaController.text.isEmpty ||
+        ivaController.text.isEmpty ||
+        totalController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, completa todos los campos'),
+          backgroundColor: Colors.red,
+        ),
       );
-
-      await firebaseService.createOrUpdateCotizacion(cotizacion);
-      Navigator.pop(context);
-    } on Exception catch (e) {
-      print(e);
+      return;
     }
+
+    // Convertir el String de fecha a DateTime
+    DateTime fechaDateTime;
+    try {
+      // Si estás usando el DateFormat que definimos antes
+      fechaDateTime = dateFormat.parse(fechaController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error en el formato de la fecha'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Crear el objeto Cotizacion
+    Cotizacion cotizacion = Cotizacion(
+      idCotizacion: null,
+      idEstadoCoti: 1,
+      codigo: codigoController.text,
+      nombreCliente: nombreClienteController.text,
+      fecha: fechaDateTime,  // Usar el DateTime convertido
+      iva: double.tryParse(ivaController.text) ?? 0.0,
+      total: double.tryParse(totalController.text) ?? 0.0
+    );
+
+    // Imprimir los valores para debug
+    print('Fecha seleccionada: ${fechaDateTime.toString()}');
+    print('Cotización a crear: ${cotizacion.toJson()}');
+
+    await firebaseService.createOrUpdateCotizacion(cotizacion);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Cotización creada exitosamente'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    
+    Navigator.pop(context);
+  } catch (e) {
+    print('Error al crear la cotización: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error al crear la cotización: ${e.toString()}'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
 }

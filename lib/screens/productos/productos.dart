@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:who/models/modelProducto.dart';
+import 'package:who/screens/productos/productoInsert.dart';
 
 
 
@@ -64,20 +65,29 @@ class ProductosState extends State<Productos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Productos',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: mainColor,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: cargarProductos,
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CrearProductoScreen()),
+              ).then((value) => cargarProductos());
+            },
           ),
         ],
       ),
       body: isLoading 
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(
               color: mainColor,
             ),
@@ -87,7 +97,7 @@ class ProductosState extends State<Productos> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.inventory_2_outlined,
                     size: 64,
                     color: Colors.grey,
@@ -108,11 +118,11 @@ class ProductosState extends State<Productos> {
               child: GridView.builder(
                 padding: const EdgeInsets.all(16.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
-                ),
+                crossAxisCount: 2,
+                childAspectRatio: 0.65, // Cambiado de 0.75 a 0.65 para hacer las tarjetas más altas
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0,
+              ),
                 itemCount: productos.length,
                 itemBuilder: (context, index) {
                   return ProductCard(
@@ -151,30 +161,29 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 3,
+          // Imagen del producto
+          Container(
+            height: 140, // Imagen más grande
             child: ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12.0)),
-              child: Container(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
+              child: Image.network(
+                producto.imagen,
                 width: double.infinity,
-                child: Image.network(
-                  producto.imagen,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: mainColor.withOpacity(0.5),
-                      ),
-                    );
-                  },
-                ),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Icon(
+                      Icons.image_not_supported,
+                      size: 50,
+                      color: mainColor.withOpacity(0.5),
+                    ),
+                  );
+                },
               ),
             ),
           ),
+          // Contenido del producto
           Expanded(
-            flex: 2,
             child: Container(
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
@@ -188,17 +197,10 @@ class ProductCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Código: ${producto.codigo ?? "N/A"}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                  // Nombre del producto
                   Text(
                     producto.nombre,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -206,17 +208,22 @@ class ProductCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    producto.descripcion,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                  const SizedBox(height: 8),
+                  // Descripción del producto
+                  Expanded(
+                    child: Text(
+                      producto.descripcion,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[600],
+                        height: 1.3,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 8),
+                  // Precio del producto
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

@@ -1,12 +1,15 @@
+import 'package:who/models/modelCotizacionItem.dart';
+
 class Cotizacion {
-  int? idCotizacion;
+  String? idCotizacion;
   int idEstadoCoti;
   String codigo;
   String nombreCliente;
   DateTime fecha;
   double iva;
+  double subtotal;  // Nuevo campo
   double total;
-  String imagen;
+  List<CotizacionItem> items; // Nuevo campo
 
   Cotizacion({
     this.idCotizacion,
@@ -15,20 +18,28 @@ class Cotizacion {
     required this.nombreCliente,
     required this.fecha,
     required this.iva,
+    this.subtotal = 0.0,
     required this.total,
-    required this.imagen,
+    this.items = const [],
   });
 
+  void recalcularTotales() {
+    subtotal = items.fold(0, (sum, item) => sum + item.subtotal);
+    total = subtotal + (subtotal * (iva / 100));
+  }
+
+  // Actualizar toJson y fromJson para incluir los nuevos campos
   Map<String, dynamic> toJson() {
     return {
       'idCotizacion': idCotizacion,
       'idEstadoCoti': idEstadoCoti,
       'codigo': codigo,
       'nombreCliente': nombreCliente,
-      'fecha': fecha,
+      'fecha': fecha.toIso8601String(),
       'iva': iva,
+      'subtotal': subtotal,
       'total': total,
-      'imagen': imagen,
+      'items': items.map((item) => item.toJson()).toList(),
     };
   }
 
@@ -37,11 +48,16 @@ class Cotizacion {
       idCotizacion: json['idCotizacion'],
       idEstadoCoti: json['idEstadoCoti'],
       codigo: json['codigo'],
-      nombreCliente: json['nombreCliente'] ?? '', // Manejar valores nulos
-      fecha: json['fecha'] ?? '', // Manejar valores nulos
-      iva: (json['iva'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
-      imagen: json['imagen'] ?? '', // Manejar valores nulos
+      nombreCliente: json['nombreCliente'] ?? '',
+      fecha: json['fecha'] != null
+          ? DateTime.parse(json['fecha'])
+          : DateTime.now(),
+      iva: (json['iva'] as num?)?.toDouble() ?? 0.0,
+      subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
+      total: (json['total'] as num?)?.toDouble() ?? 0.0,
+      items: (json['items'] as List<dynamic>?)
+          ?.map((item) => CotizacionItem.fromJson(item))
+          .toList() ?? [],
     );
   }
 }
