@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:who/screens/homeScreen.dart'; 
+import 'package:who/screens/appBar.dart';
 import 'registerPage.dart'; 
 
 
@@ -43,12 +43,12 @@ class LoginPage extends StatelessWidget {
                     // Inicio de sesión exitoso, navega a la página de "Hola Mundo"
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                      MaterialPageRoute(builder: (context) => const AppBarMenu()),
                     );
                   } catch (e) {
                     // Error de inicio de sesión, muestra un mensaje de error
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Correo electrónico o contraseña incorrectos'), // Mensaje de error en la interfaz
                       ),
                     );

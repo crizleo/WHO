@@ -22,7 +22,7 @@ class CotizacionCreateState extends State<CotizacionCreate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Agregar Cotización',
           style: TextStyle(fontSize: 30),
         ),
