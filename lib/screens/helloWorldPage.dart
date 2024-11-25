@@ -7,7 +7,7 @@ class HelloWorldPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('¡Hola Mundo!'), // Título de la barra superior
       ),
-      body: Center(
+      body: const Center(
         child: Text('¡Bienvenido! Has iniciado sesión con éxito.'), // Mensaje de bienvenida
       ),
     );
