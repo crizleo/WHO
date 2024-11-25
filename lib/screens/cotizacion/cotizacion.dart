@@ -23,11 +23,12 @@ class CotizacionListState extends State<CotizacionList> {
   void cargarCotizaciones() async {
     DatabaseEvent event = await FirebaseDatabase.instance.ref().child('cotizaciones').once();
     DataSnapshot snapshot = event.snapshot;
-    Map<String, dynamic>? cotizacionesMap = snapshot.value as Map<String, dynamic>?;
-    if (cotizacionesMap != null) {
+    if (snapshot.value != null) {
+      Map<String, dynamic> cotizacionesMap = Map<String, dynamic>.from(snapshot.value as Map);
       setState(() {
         cotizaciones = cotizacionesMap.entries.map((entry) {
-          return Cotizacion.fromJson(Map<String, dynamic>.from(entry.value));
+          Map<String, dynamic> cotizacionData = Map<String, dynamic>.from(entry.value as Map);
+          return Cotizacion.fromJson(cotizacionData);
         }).toList();
       });
     }
@@ -59,7 +60,7 @@ class CotizacionListState extends State<CotizacionList> {
             title: Text(cotizacion.codigo),
             subtitle: Text('Total: ${cotizacion.total.toStringAsFixed(2)}'),
             trailing: IconButton(
-              icon: const Icon(Icons.edit),
+              icon: Icon(Icons.edit),
               onPressed: () {
                 Navigator.push(
                   context,
