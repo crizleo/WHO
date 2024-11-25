@@ -24,8 +24,8 @@ class Pedido {
       codigoPedido: json['codigoPedido'],
       idEstado: json['idEstado'],
       codigo: json['codigo'],
-      iva: json['iva'],
-      total: json['total'],
+      iva: (json['iva'] as num).toDouble(),
+      total: (json['total'] as num).toDouble(),
       direccion: json['direccion'],
     );
   }
