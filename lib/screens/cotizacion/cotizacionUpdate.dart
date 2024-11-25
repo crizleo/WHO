@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
 
@@ -19,6 +20,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
   Cotizacion? cotizacion;
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -31,7 +33,8 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
     setState(() {
       codigoController.text = cotizacion?.codigo ?? '';
       nombreClienteController.text = cotizacion?.nombreCliente ?? '';
-      fechaController.text = cotizacion?.fecha ?? '';
+      selectedDate = cotizacion?.fecha ?? DateTime.now();
+      fechaController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       ivaController.text = cotizacion?.iva.toString() ?? '';
       totalController.text = cotizacion?.total.toString() ?? '';
     });
@@ -77,6 +80,20 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
                 fillColor: Colors.white,
                 hintText: 'Fecha',
               ),
+              onTap: () async { 
+                DateTime? pickedDate = await showDatePicker( 
+                  context: context, 
+                  initialDate: selectedDate, 
+                  firstDate: DateTime(2000), 
+                  lastDate: DateTime(2101), 
+                ); 
+                if (pickedDate != null && pickedDate != selectedDate) { 
+                  setState(() { 
+                    selectedDate = pickedDate; 
+                    fechaController.text = DateFormat('yyyy-MM-dd').format(selectedDate); 
+                  }); 
+                } 
+              },
             ),
             SizedBox(height: 20),
             TextFormField(
@@ -142,7 +159,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
           idEstadoCoti: cotizacion!.idEstadoCoti, // Mantener el estado actual
           codigo: codigoController.text,
           nombreCliente: nombreClienteController.text,
-          fecha: fechaController.text,
+          fecha: selectedDate,
           iva: double.parse(ivaController.text),
           total: double.parse(totalController.text),
           imagen: cotizacion!.imagen, // Mantener la imagen actual

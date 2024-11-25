@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
 import './cotizacionUpdate.dart'; // Importar la pantalla de actualización de cotización
@@ -15,6 +16,7 @@ class CotizacionCreateState extends State<CotizacionCreate> {
   TextEditingController ivaController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,20 @@ class CotizacionCreateState extends State<CotizacionCreate> {
                 fillColor: Colors.white,
                 hintText: 'Fecha',
               ),
+              onTap: () async { 
+                DateTime? pickedDate = await showDatePicker( 
+                  context: context, 
+                  initialDate: selectedDate, 
+                  firstDate: DateTime(2000), 
+                  lastDate: DateTime(2101), 
+                ); 
+                if (pickedDate != null && pickedDate != selectedDate) { 
+                  setState(() { 
+                    selectedDate = pickedDate; 
+                    fechaController.text = DateFormat('yyyy-MM-dd').format(selectedDate); 
+                  }); 
+                } 
+              },
             ),
             SizedBox(height: 20),
             TextFormField(
@@ -103,7 +119,7 @@ class CotizacionCreateState extends State<CotizacionCreate> {
         idEstadoCoti: 1, // Puede ser un valor real según tu lógica
         codigo: codigoController.text,
         nombreCliente: nombreClienteController.text,
-        fecha: fechaController.text,
+        fecha: selectedDate,
         iva: double.parse(ivaController.text),
         total: double.parse(totalController.text),
         imagen: '', // Sin imagen
