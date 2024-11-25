@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart'; 
-import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:who/screens/homeScreen.dart'; 
 import 'registerPage.dart'; 
-import 'helloWorldPage.dart';
+
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController(); // Controlador para el campo de correo
@@ -42,7 +43,7 @@ class LoginPage extends StatelessWidget {
                     // Inicio de sesión exitoso, navega a la página de "Hola Mundo"
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HelloWorldPage()),
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
                     );
                   } catch (e) {
                     // Error de inicio de sesión, muestra un mensaje de error
