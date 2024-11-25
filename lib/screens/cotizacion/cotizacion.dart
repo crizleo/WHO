@@ -59,7 +59,7 @@ class CotizacionListState extends State<CotizacionList> {
             title: Text(cotizacion.codigo),
             subtitle: Text('Total: ${cotizacion.total.toStringAsFixed(2)}'),
             trailing: IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -75,14 +75,6 @@ class CotizacionListState extends State<CotizacionList> {
             },
           );
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
-          BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
-        ]
       ),
     );
   }
