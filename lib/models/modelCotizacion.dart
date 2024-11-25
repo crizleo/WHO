@@ -2,6 +2,8 @@ class Cotizacion {
   int? idCotizacion;
   int idEstadoCoti;
   String codigo;
+  String nombreCliente;
+  String fecha;
   double iva;
   double total;
   String imagen;
@@ -10,6 +12,8 @@ class Cotizacion {
     this.idCotizacion,
     required this.idEstadoCoti,
     required this.codigo,
+    required this.nombreCliente,
+    required this.fecha,
     required this.iva,
     required this.total,
     required this.imagen,
@@ -20,6 +24,8 @@ class Cotizacion {
       'idCotizacion': idCotizacion,
       'idEstadoCoti': idEstadoCoti,
       'codigo': codigo,
+      'nombreCliente': nombreCliente,
+      'fecha': fecha,
       'iva': iva,
       'total': total,
       'imagen': imagen,
@@ -31,6 +37,8 @@ class Cotizacion {
       idCotizacion: json['idCotizacion'],
       idEstadoCoti: json['idEstadoCoti'],
       codigo: json['codigo'],
+      nombreCliente: json['nombreCliente'],
+      fecha: json['fecha'],
       iva: (json['iva'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
       imagen: json['imagen'],

@@ -13,6 +13,8 @@ class CotizacionUpdate extends StatefulWidget {
 
 class CotizacionUpdateState extends State<CotizacionUpdate> {
   TextEditingController codigoController = TextEditingController();
+  TextEditingController nombreClienteController = TextEditingController();
+  TextEditingController fechaController = TextEditingController();
   TextEditingController ivaController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
@@ -28,6 +30,8 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
     cotizacion = await firebaseService.readCotizacion(widget.cotizacionId);
     setState(() {
       codigoController.text = cotizacion?.codigo ?? '';
+      nombreClienteController.text = cotizacion?.nombreCliente ?? '';
+      fechaController.text = cotizacion?.fecha ?? '';
       ivaController.text = cotizacion?.iva.toString() ?? '';
       totalController.text = cotizacion?.total.toString() ?? '';
     });
@@ -54,6 +58,24 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Código',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: nombreClienteController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Nombre del Cliente',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: fechaController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Fecha',
               ),
             ),
             SizedBox(height: 20),
@@ -119,6 +141,8 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
           idCotizacion: widget.cotizacionId,
           idEstadoCoti: cotizacion!.idEstadoCoti, // Mantener el estado actual
           codigo: codigoController.text,
+          nombreCliente: nombreClienteController.text,
+          fecha: fechaController.text,
           iva: double.parse(ivaController.text),
           total: double.parse(totalController.text),
           imagen: cotizacion!.imagen, // Mantener la imagen actual
