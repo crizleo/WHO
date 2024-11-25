@@ -77,28 +77,37 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
               ),
             ),
             SizedBox(height: 20),
-            MaterialButton(
-              height: 40,
-              onPressed: actualizarCotizacion,
-              child: Text(
-                "Actualizar Cotización",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                MaterialButton(
+                  height: 40,
+                  onPressed: actualizarCotizacion,
+                  child: Text(
+                    "Actualizar Cotización",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                  color: Colors.indigo[900],
                 ),
-              ),
-              color: Colors.indigo[900],
+                MaterialButton(
+                  height: 40,
+                  onPressed: eliminarCotizacion,
+                  child: Text(
+                    "Eliminar Cotización",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                  color: Colors.red[900],
+                ),
+              ],
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
-          BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
-        ]
       ),
     );
   }
@@ -118,6 +127,15 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
         await firebaseService.createOrUpdateCotizacion(cotizacion!);
         Navigator.pop(context);
       }
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  void eliminarCotizacion() async {
+    try {
+      await firebaseService.deleteCotizacion(widget.cotizacionId);
+      Navigator.pop(context);
     } on Exception catch (e) {
       print(e);
     }
