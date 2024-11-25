@@ -65,7 +65,11 @@ class CotizacionListState extends State<CotizacionList> {
                 MaterialPageRoute(
                   builder: (context) => CotizacionUpdate(cotizacionId: cotizacion.idCotizacion!),
                 ),
-              ).then((value) => cargarCotizaciones());
+              ).then((value){
+                if (value) {
+                  cargarCotizaciones(); //si encuentra un valor carga el dato
+                }
+              });
             },
           );
         },
