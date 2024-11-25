@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
 import './cotizacion.dart';
@@ -15,6 +16,7 @@ class CotizacionCreateState extends State<CotizacionCreate> {
   TextEditingController nombreClienteController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,24 @@ class CotizacionCreateState extends State<CotizacionCreate> {
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Código',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: nombreClienteController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Nombre del Cliente',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: fechaController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Fecha',
               ),
             ),
             SizedBox(height: 20),
@@ -92,6 +112,8 @@ class CotizacionCreateState extends State<CotizacionCreate> {
         idCotizacion: null, // ID auto-generado
         idEstadoCoti: 1, // Puede ser un valor real según tu lógica
         codigo: codigoController.text,
+        nombreCliente: nombreClienteController.text,
+        fecha: fechaController.text,
         iva: double.parse(ivaController.text),
         total: double.parse(totalController.text),
         imagen: '', 

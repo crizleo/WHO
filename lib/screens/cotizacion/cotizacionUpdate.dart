@@ -20,7 +20,6 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
   Cotizacion? cotizacion;
-  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   @override
   void initState() {
@@ -33,10 +32,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
     setState(() {
       codigoController.text = cotizacion?.codigo ?? '';
       nombreClienteController.text = cotizacion?.nombreCliente ?? '';
-      // Formatear la fecha DateTime a String
-      fechaController.text = cotizacion?.fecha != null 
-          ? dateFormat.format(cotizacion!.fecha)
-          : '';
+      fechaController.text = cotizacion?.fecha ?? '';
       ivaController.text = cotizacion?.iva.toString() ?? '';
       totalController.text = cotizacion?.total.toString() ?? '';
     });
@@ -125,7 +121,6 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
                 fillColor: Colors.white,
                 contentPadding: EdgeInsets.all(16),
               ),
-              onTap: () => _selectDate(context),
             ),
             SizedBox(height: 16),
             _buildInputField(
@@ -228,7 +223,7 @@ class CotizacionUpdateState extends State<CotizacionUpdate> {
           idEstadoCoti: cotizacion!.idEstadoCoti,
           codigo: codigoController.text,
           nombreCliente: nombreClienteController.text,
-          fecha: fechaDateTime, // Usar el DateTime convertido
+          fecha: fechaController.text,
           iva: double.parse(ivaController.text),
           total: double.parse(totalController.text),
           imagen: cotizacion!.imagen,

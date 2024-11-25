@@ -38,7 +38,7 @@ class Cotizacion {
       idEstadoCoti: json['idEstadoCoti'],
       codigo: json['codigo'],
       nombreCliente: json['nombreCliente'] ?? '', // Manejar valores nulos
-      fecha: json['fecha'], // Manejar valores nulos
+      fecha: json['fecha'] ?? '', // Manejar valores nulos
       iva: (json['iva'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
       imagen: json['imagen'] ?? '', // Manejar valores nulos
