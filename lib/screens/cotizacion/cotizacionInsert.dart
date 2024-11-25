@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/firebaseDataBase.dart';
 import '../../models/modelCotizacion.dart';
-import './cotizacion.dart';
+import './cotizacionUpdate.dart'; // Importar la pantalla de actualización de cotización
 
 class CotizacionCreate extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class CotizacionCreate extends StatefulWidget {
 
 class CotizacionCreateState extends State<CotizacionCreate> {
   TextEditingController codigoController = TextEditingController();
+  TextEditingController nombreClienteController = TextEditingController();
+  TextEditingController fechaController = TextEditingController();
   TextEditingController ivaController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   FirebaseService firebaseService = FirebaseService();
@@ -35,6 +37,24 @@ class CotizacionCreateState extends State<CotizacionCreate> {
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Código',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: nombreClienteController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Nombre del Cliente',
+              ),
+            ),
+            SizedBox(height: 20),
+            TextFormField(
+              controller: fechaController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Fecha',
               ),
             ),
             SizedBox(height: 20),
@@ -73,30 +93,31 @@ class CotizacionCreateState extends State<CotizacionCreate> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Productos"),
-          BottomNavigationBarItem(icon: Icon(Icons.pageview), label: "Cotizaciones"),
-          BottomNavigationBarItem(icon: Icon(Icons.inventory), label: "Pedidos")
-        ]
-      ),
     );
   }
 
   void agregarCotizacion() async {
     try {
       Cotizacion cotizacion = Cotizacion(
-        idCotizacion: null, // ID auto-generado
+        idCotizacion: DateTime.now().millisecondsSinceEpoch, // Generar un ID basado en la hora actual
         idEstadoCoti: 1, // Puede ser un valor real según tu lógica
         codigo: codigoController.text,
+        nombreCliente: nombreClienteController.text,
+        fecha: fechaController.text,
         iva: double.parse(ivaController.text),
         total: double.parse(totalController.text),
         imagen: '', // Sin imagen
       );
 
       await firebaseService.createOrUpdateCotizacion(cotizacion);
-      Navigator.pop(context);
+
+      // Redirigir a la pantalla de actualización de la cotización
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CotizacionUpdate(cotizacionId: cotizacion.idCotizacion!),
+        ),
+      );
     } on Exception catch (e) {
       print(e);
     }
